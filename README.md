@@ -7,7 +7,7 @@ AI-powered Root Cause Analysis for telecom networks using **LangGraph + OpenAI +
 - **LangGraph Agent Workflow** — 5-node pipeline: Classify → Retrieve → Analyze → Recommend → Validate
 - **LLM-based Classification** — Uses real KPI data + alarms + logs to classify issues (never returns "unknown")
 - **6 Issue Categories** — Congestion, Interference, BLER Issue, Link Failure, Hardware Fault, Coverage Issue, Healthy
-- **Spectrum Optimization** — PRB analysis, frequency planning, capacity health checks
+- **Spectrum Efficiency Optimization** — PRB analysis, frequency planning, capacity health checks
 - **Network-Wide Scan** — Batch analysis across multiple cells
 - **McKinsey-style UI** — Professional Streamlit dashboard with KPI monitoring
 
