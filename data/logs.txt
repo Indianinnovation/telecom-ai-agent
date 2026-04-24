@@ -1,0 +1,29 @@
+2024-01-01 09:55:00 INFO  [CELL_001] Scheduler: PRB utilization rising — 72%
+2024-01-01 09:58:00 WARN  [CELL_001] Scheduler: PRB utilization critical — 88%
+2024-01-01 10:00:00 ERROR [CELL_001] Congestion detected — DL throughput degraded to 12 Mbps
+2024-01-01 10:01:00 ERROR [CELL_001] RRC connected users: 278 — exceeding capacity threshold
+2024-01-01 10:02:00 WARN  [CELL_001] Handover attempts increased — 45 in last 60s
+2024-01-01 10:03:00 ERROR [CELL_001] Packet loss rate: 8.5% — QoS degraded
+2024-01-01 10:05:00 WARN  [CELL_001] Alarm raised: THROUGHPUT_DROP
+2024-01-01 10:10:00 INFO  [CELL_001] Load balancing triggered — offloading to CELL_002
+
+2024-01-01 07:25:00 INFO  [CELL_002] SINR monitoring: avg 12 dB — normal
+2024-01-01 07:28:00 WARN  [CELL_002] BLER rising — 7.2%
+2024-01-01 07:30:00 ERROR [CELL_002] BLER exceeded threshold — 18.5%
+2024-01-01 07:31:00 ERROR [CELL_002] Retransmission rate: 14.2% — interference suspected
+2024-01-01 07:32:00 WARN  [CELL_002] SINR degraded — avg 1.5 dB
+2024-01-01 07:33:00 ERROR [CELL_002] Possible external interference on band n78
+2024-01-01 07:35:00 WARN  [CELL_002] Alarm raised: HIGH_RETRANSMISSION
+
+2024-01-01 10:08:00 INFO  [CELL_003] Traffic spike detected — 265 RRC users
+2024-01-01 10:09:00 WARN  [CELL_003] PRB utilization: 91%
+2024-01-01 10:10:00 ERROR [CELL_003] Cell congestion — throughput dropped to 8 Mbps
+2024-01-01 10:11:00 ERROR [CELL_003] Alarm raised: CELL_CONGESTION
+
+2024-01-01 07:28:00 WARN  [CELL_005] SINR degraded — avg -1.2 dB
+2024-01-01 07:30:00 ERROR [CELL_005] Low SINR alarm — possible coverage hole
+2024-01-01 07:31:00 WARN  [CELL_005] BLER: 22.3% — retransmissions increasing
+
+2024-01-01 12:00:00 ERROR [CELL_007] S1 link failure — connection lost to core network
+2024-01-01 12:01:00 ERROR [CELL_007] Cell out of service
+2024-01-01 12:45:00 INFO  [CELL_007] S1 link restored — cell back in service

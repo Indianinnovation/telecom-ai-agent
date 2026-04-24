@@ -1,0 +1,74 @@
+[
+  {
+    "alarm_id": "ALM001",
+    "ne_id": "CELL_001",
+    "alarm_type": "HIGH_PRB_UTILIZATION",
+    "severity": "CRITICAL",
+    "timestamp": "2024-01-01 10:00:00",
+    "description": "PRB utilization exceeded 85% threshold",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM002",
+    "ne_id": "CELL_001",
+    "alarm_type": "THROUGHPUT_DROP",
+    "severity": "MAJOR",
+    "timestamp": "2024-01-01 10:05:00",
+    "description": "DL throughput dropped below 20 Mbps",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM003",
+    "ne_id": "CELL_002",
+    "alarm_type": "HIGH_BLER",
+    "severity": "MAJOR",
+    "timestamp": "2024-01-01 07:30:00",
+    "description": "BLER exceeded 10% \u2014 possible interference",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM004",
+    "ne_id": "CELL_002",
+    "alarm_type": "HIGH_RETRANSMISSION",
+    "severity": "MINOR",
+    "timestamp": "2024-01-01 07:35:00",
+    "description": "Retransmission rate above 10%",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM005",
+    "ne_id": "CELL_003",
+    "alarm_type": "CELL_CONGESTION",
+    "severity": "CRITICAL",
+    "timestamp": "2024-01-01 10:10:00",
+    "description": "RRC connected users exceeded 250",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM006",
+    "ne_id": "CELL_005",
+    "alarm_type": "LOW_SINR",
+    "severity": "MAJOR",
+    "timestamp": "2024-01-01 07:30:00",
+    "description": "SINR dropped below 0 dB",
+    "status": "ACTIVE"
+  },
+  {
+    "alarm_id": "ALM007",
+    "ne_id": "CELL_007",
+    "alarm_type": "LINK_FAILURE",
+    "severity": "CRITICAL",
+    "timestamp": "2024-01-01 12:00:00",
+    "description": "S1 link failure detected",
+    "status": "CLEARED"
+  },
+  {
+    "alarm_id": "ALM008",
+    "ne_id": "CELL_009",
+    "alarm_type": "POWER_DEGRADATION",
+    "severity": "MINOR",
+    "timestamp": "2024-01-01 09:00:00",
+    "description": "TX power reduced by 3 dB",
+    "status": "ACTIVE"
+  }
+]
