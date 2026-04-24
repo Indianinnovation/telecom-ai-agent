@@ -18,6 +18,7 @@ User → Streamlit UI → FastAPI → LangGraph Agent → OpenAI → Response
                                       ↓
                               Tools: KPI (CSV) + Alarms (JSON) + Logs (TXT)
 ```
+<img width="1505" height="821" alt="image" src="https://github.com/user-attachments/assets/ed096a75-855f-4099-ad68-9cb4c80762ec" />
 
 ## 📁 Project Structure
 
