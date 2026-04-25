@@ -187,11 +187,11 @@ def _analyze_kpi(values: np.ndarray, thresholds: dict, z_threshold: float = 2.0)
         "mean": round(float(mean), 2),
         "std": round(float(std), 2),
         "z_score": round(float(z_score), 2),
-        "is_z_anomaly": is_z_anomaly,
+        "is_z_anomaly": bool(is_z_anomaly),
         "severity": severity,
         "trend": trend,
         "trend_slope": round(float(trend_slope), 3),
-        "is_anomaly": is_z_anomaly or is_crit or is_warn,
+        "is_anomaly": bool(is_z_anomaly or is_crit or is_warn),
     }
 
 
