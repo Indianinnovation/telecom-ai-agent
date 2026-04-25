@@ -3,6 +3,7 @@ from app.models.schemas import AnalyzeRequest, AnalyzeResponse
 from app.graph.agent import agent
 from app.tools.anomaly_tool import detect_anomalies
 from app.tools.config_tool import audit_configuration
+from app.tools.realtime_engine import run_realtime_analysis
 import logging
 
 router = APIRouter()
@@ -65,6 +66,21 @@ async def config_audit(cell_id: str):
         raise
     except Exception as e:
         logger.error(f"Config error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/realtime/{cell_id}")
+async def realtime_analytics(cell_id: str):
+    """Real-time analytics: anomaly detection + degradation patterns + self-healing."""
+    try:
+        logger.info(f"Real-time analysis for: {cell_id}")
+        result = run_realtime_analysis(cell_id)
+        if "error" in result:
+            raise HTTPException(status_code=404, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Realtime error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/health")

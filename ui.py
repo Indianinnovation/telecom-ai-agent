@@ -492,11 +492,12 @@ if st.session_state.history:
     st.markdown("<div style='margin-bottom:16px;'></div>", unsafe_allow_html=True)
 
 # Main tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🔍  Analyze",
     "📊  KPI Monitor",
     "⚠️  Anomaly Detection",
     "⚙️  Config Audit",
+    "📡  Real-Time Analytics",
     "📜  History"
 ])
 
@@ -1248,8 +1249,162 @@ with tab4:
     except Exception as e:
         st.error(f"Error: {e}")
 
-# ══ Step 5a + 5b: History Tab ════════════════════════════════════════════════
+# ══ Tab 5: Real-Time Analytics & Self-Healing ════════════════════════════════
 with tab5:
+    st.markdown('<p class="mck-section-title">Real-Time Analytics & Self-Healing</p>', unsafe_allow_html=True)
+
+    rt_c1, rt_c2 = st.columns([2, 5])
+    with rt_c1:
+        rt_cell = st.selectbox("Select Cell", [f"CELL_{i:03d}" for i in range(1, 11)], key="rt_cell")
+
+    try:
+        rt = requests.get(f"{API_URL}/realtime/{rt_cell}", timeout=30).json()
+
+        if "error" in rt:
+            st.error(rt["error"])
+        else:
+            score = rt.get("health_score", 0)
+            status = rt.get("health_status", "")
+            score_color = "#16a34a" if score >= 80 else ("#d97706" if score >= 50 else "#dc2626")
+
+            # Header card
+            st.markdown(f"""
+            <div class="mck-card-blue" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <div style="font-size:11px;font-weight:700;color:#64a0c8;letter-spacing:1.5px;
+                                    text-transform:uppercase;">Real-Time Cell Health</div>
+                        <div style="font-size:42px;font-weight:800;color:#ffffff;margin-top:4px;">{score}</div>
+                        <div style="font-size:12px;color:{score_color};font-weight:700;margin-top:4px;">{status.upper()}</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:11px;color:#94b8d4;">KPIs Monitored</div>
+                        <div style="font-size:28px;font-weight:800;color:#ffffff;">{rt.get('kpis_monitored',0)}</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:11px;color:#94b8d4;">Anomalies</div>
+                        <div style="font-size:28px;font-weight:800;color:#ef4444;">{rt.get('anomaly_count',0)}</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:11px;color:#94b8d4;">Patterns</div>
+                        <div style="font-size:28px;font-weight:800;color:#f59e0b;">{rt.get('pattern_count',0)}</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:11px;color:#94b8d4;">Self-Healing</div>
+                        <div style="font-size:28px;font-weight:800;color:#22c55e;">{rt.get('auto_executable_count',0)}</div>
+                        <div style="font-size:10px;color:#94b8d4;">auto actions</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Category Health
+            st.markdown('<p class="mck-section-title">Category Health</p>', unsafe_allow_html=True)
+            cats = rt.get("category_health", {})
+            cat_cols = st.columns(min(len(cats), 6))
+            cat_icons = {"capacity": "📦", "performance": "⚡", "quality": "🎯", "rf": "📡", "mobility": "🚗", "spectral": "🌐"}
+            for i, (cat, data) in enumerate(cats.items()):
+                cat_color = "#16a34a" if data["score"] >= 80 else ("#d97706" if data["score"] >= 50 else "#dc2626")
+                icon = cat_icons.get(cat, "📊")
+                with cat_cols[i % len(cat_cols)]:
+                    st.markdown(f"""
+                    <div class="mck-kpi-card" style="text-align:center;">
+                        <div style="font-size:20px;">{icon}</div>
+                        <div class="mck-kpi-label" style="margin-top:4px;">{cat.title()}</div>
+                        <div style="font-size:28px;font-weight:800;color:{cat_color};">{data['score']}</div>
+                        <div style="font-size:11px;color:{cat_color};font-weight:600;">{data['status'].upper()}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            # Degradation Patterns
+            patterns = rt.get("active_patterns", [])
+            if patterns:
+                st.markdown('<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">', unsafe_allow_html=True)
+                st.markdown('<p class="mck-section-title">Active Degradation Patterns</p>', unsafe_allow_html=True)
+
+                for p in patterns:
+                    sev = p.get("severity", "major")
+                    sev_color = "#dc2626" if sev == "critical" else "#d97706"
+                    css = "mck-alarm-critical" if sev == "critical" else "mck-alarm-major"
+
+                    st.markdown(f"""
+                    <div class="mck-card" style="margin:12px 0;padding:20px 24px;border-left:4px solid {sev_color};">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <div>
+                                <span style="font-size:11px;font-weight:700;color:{sev_color};">{sev.upper()}</span>
+                                <span style="font-size:14px;font-weight:700;color:#0d2b4e;margin-left:8px;">{p['name']}</span>
+                            </div>
+                        </div>
+                        <div class="mck-card-body" style="margin-bottom:12px;">{p['description']}</div>
+                    """, unsafe_allow_html=True)
+
+                    # Affected KPIs
+                    affected = p.get("affected_kpis", {})
+                    if affected:
+                        kpi_html = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">'
+                        for kpi_name, kpi_data in affected.items():
+                            ks = kpi_data.get("severity", "normal")
+                            kc = "#dc2626" if ks == "critical" else ("#d97706" if ks == "warning" else "#16a34a")
+                            kpi_html += f'<span style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;padding:4px 8px;font-size:11px;"><span style="color:{kc};font-weight:700;">{ks[0].upper()}</span> {kpi_name}: {kpi_data["latest_value"]}{kpi_data.get("unit","")}</span>'
+                        kpi_html += '</div>'
+                        st.markdown(kpi_html, unsafe_allow_html=True)
+
+                    # Self-healing actions
+                    st.markdown('<div style="font-size:10px;font-weight:700;color:#0d2b4e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Self-Healing Actions</div>', unsafe_allow_html=True)
+                    for idx, action in enumerate(p.get("self_healing_actions", []), 1):
+                        auto = action.get("auto_executable", False)
+                        auto_badge = '<span style="background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;">AUTO</span>' if auto else '<span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;">MANUAL</span>'
+                        st.markdown(f"""
+                        <div class="mck-rec-card">
+                            <div style="display:flex;gap:10px;align-items:flex-start;">
+                                <div style="min-width:24px;height:24px;background:#0d2b4e;color:#fff;
+                                            border-radius:50%;display:flex;align-items:center;
+                                            justify-content:center;font-size:11px;font-weight:700;">{idx}</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                        {auto_badge}
+                                        <span style="font-size:12px;font-weight:700;color:#0d2b4e;">{action['action']}</span>
+                                    </div>
+                                    <div class="mck-card-body">{action['description']}</div>
+                                    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Parameter: {action['parameter']}</div>
+                                </div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">', unsafe_allow_html=True)
+                st.markdown("""
+                <div class="mck-card" style="text-align:center;padding:32px;">
+                    <div style="font-size:28px;margin-bottom:8px;">✅</div>
+                    <div style="font-size:14px;font-weight:700;color:#16a34a;">No Degradation Patterns Detected</div>
+                    <div style="font-size:12px;color:#94a3b8;margin-top:4px;">All KPI correlation chains are within normal ranges</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Anomaly Summary Table
+            anomalies = rt.get("anomalies", [])
+            if anomalies:
+                st.markdown('<hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">', unsafe_allow_html=True)
+                st.markdown('<p class="mck-section-title">All Detected Anomalies</p>', unsafe_allow_html=True)
+                anom_df = pd.DataFrame([{
+                    "KPI": a.get("kpi", "").replace("_", " ").title(),
+                    "Value": f"{a.get('latest_value','')}{a.get('unit','')}",
+                    "Severity": a.get("severity", "").upper(),
+                    "Z-Score": a.get("z_score", 0),
+                    "Trend": a.get("trend", "").title(),
+                    "Category": a.get("category", "").title(),
+                } for a in anomalies])
+                st.dataframe(anom_df, width="stretch", hide_index=True)
+
+    except requests.exceptions.ConnectionError:
+        st.error("❌ API offline. Start the API server first.")
+    except Exception as e:
+        st.error(f"Error: {e}")
+
+# ══ Step 5a + 5b: History Tab ════════════════════════════════════════════════
+with tab6:
     st.markdown('<p class="mck-section-title">Analysis History</p>', unsafe_allow_html=True)
 
     if not st.session_state.history:
