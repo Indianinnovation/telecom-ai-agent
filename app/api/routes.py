@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import AnalyzeRequest, AnalyzeResponse
 from app.graph.agent import agent
+from app.tools.anomaly_tool import detect_anomalies
+from app.tools.config_tool import audit_configuration
 import logging
 
 router = APIRouter()
@@ -33,6 +35,36 @@ async def analyze(request: AnalyzeRequest):
         )
     except Exception as e:
         logger.error(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/anomaly/{cell_id}")
+async def anomaly_detection(cell_id: str):
+    """Detect KPI anomalies using Z-score + threshold analysis."""
+    try:
+        logger.info(f"Anomaly detection for: {cell_id}")
+        result = detect_anomalies(cell_id)
+        if "error" in result:
+            raise HTTPException(status_code=404, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Anomaly error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/config/{cell_id}")
+async def config_audit(cell_id: str):
+    """Audit cell configuration against baselines."""
+    try:
+        logger.info(f"Config audit for: {cell_id}")
+        result = audit_configuration(cell_id)
+        if "error" in result:
+            raise HTTPException(status_code=404, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Config error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/health")
